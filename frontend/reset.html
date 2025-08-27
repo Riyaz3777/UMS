@@ -23,7 +23,7 @@
       e.preventDefault();
       const password = document.getElementById("password").value;
 
-      const res = await fetch(`http://localhost:5000/api/reset/reset/${token}`, {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
@@ -39,3 +39,4 @@
   </script>
 </body>
 </html>
+
