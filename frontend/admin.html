@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+
+    <h3>All Users</h3>
+    <input type="text" id="search" placeholder="Search users..." onkeyup="filterUsers()">
+
+    <table border="1" width="100%" id="usersTable">
+      <thead>
+        <tr>
+          <th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList"></tbody>
+    </table>
+
+    <h3>Add New User</h3>
+    <form id="addUserForm">
+      <input type="text" id="newName" placeholder="Name" required><br>
+      <input type="email" id="newEmail" placeholder="Email" required><br>
+      <input type="password" id="newPassword" placeholder="Password" required><br>
+      <select id="newRole">
+        <option value="User">User</option>
+        <option value="Admin">Admin</option>
+      </select><br>
+      <button type="submit">Add User</button>
+    </form>
+  </div>
+
+  <script src="JS/admin.js"></script>
+</body>
+</html>
