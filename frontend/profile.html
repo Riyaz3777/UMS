@@ -53,7 +53,7 @@
 
     // Fetch profile details
     async function loadProfile() {
-      const res = await fetch("/api/auth/profile", {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         headers: { "Authorization": "Bearer " + token }
       });
       if (res.ok) {
@@ -71,7 +71,7 @@
       e.preventDefault();
       const name = document.getElementById("name").value;
 
-      const res = await fetch("/api/users/update", {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,7 @@
       const currentPassword = document.getElementById("currentPassword").value;
       const newPassword = document.getElementById("newPassword").value;
 
-      const res = await fetch("/api/users/change-password", {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -114,3 +114,4 @@
   </script>
 </body>
 </html>
+
