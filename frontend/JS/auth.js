@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/auth"; 
+const API_URL = https://ums-2te7.onrender.com; 
 // ⚠️ Change this to your Render backend URL after deployment
 
 // =============== REGISTER ===============
@@ -42,7 +42,7 @@ if (loginForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch(`${API_URL}/login`, {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -69,3 +69,4 @@ if (loginForm) {
     }
   });
 }
+
