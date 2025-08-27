@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/users"; 
+const API_URL = https://ums-2te7.onrender.com; 
 // ⚠️ Replace with Render backend URL
 
 const token = localStorage.getItem("token");
@@ -84,7 +84,7 @@ if (addUserForm) {
 // ========== Update User Role ==========
 async function updateRole(userId, role) {
   try {
-    const res = await fetch(`${API_URL}/${userId}`, {
+    const res = await fetch(https://ums-2te7.onrender.com, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -110,7 +110,7 @@ async function deleteUser(userId) {
   if (!confirm("Are you sure you want to delete this user?")) return;
 
   try {
-    const res = await fetch(`${API_URL}/${userId}`, {
+    const res = await fetch(https://ums-2te7.onrender.com, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -147,3 +147,4 @@ function logout() {
 
 // Load users on page load
 fetchUsers();
+
