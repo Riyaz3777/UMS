@@ -9,18 +9,18 @@
 <body>
   <div class="container">
     <h2>User Profile</h2>
-    <div id="profileInfo">
+    <div id="profile">
       <p><strong>Name:</strong> <span id="name"></span></p>
       <p><strong>Email:</strong> <span id="email"></span></p>
     </div>
 
     <h3>Update Profile</h3>
     <form id="updateForm">
-      <label for="newName">Name:</label>
-      <input type="text" id="newName" name="newName">
+      <label for="newName">New Name:</label>
+      <input type="text" id="newName" name="newName" required>
 
       <label for="newPassword">New Password:</label>
-      <input type="password" id="newPassword" name="newPassword">
+      <input type="password" id="newPassword" name="newPassword" required>
 
       <button type="submit">Update</button>
     </form>
@@ -32,31 +32,31 @@
     const API_URL = "https://ums-2te7.onrender.com/api/users";
     const token = localStorage.getItem("token");
 
-    // Redirect to login if no token
     if (!token) {
+      alert("You must log in first!");
       window.location.href = "login.html";
     }
 
-    // Fetch profile data
+    // Fetch user profile
     async function fetchProfile() {
       try {
-        const res = await fetch(`${API_URL}/me`, {
-          headers: { "Authorization": `Bearer ${token}` }
+        const res = await fetch(`${API_URL}/profile`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         });
 
         const data = await res.json();
-
         if (res.ok) {
-          document.getElementById("name").textContent = data.name;
-          document.getElementById("email").textContent = data.email;
+          document.getElementById("name").innerText = data.name;
+          document.getElementById("email").innerText = data.email;
         } else {
-          alert("Error fetching profile. Please login again.");
-          localStorage.removeItem("token");
-          window.location.href = "login.html";
+          alert(data.message || "Failed to fetch profile");
         }
       } catch (err) {
         console.error(err);
-        alert("Server error");
+        alert("Error connecting to server");
       }
     }
 
@@ -70,7 +70,7 @@
       const newPassword = document.getElementById("newPassword").value;
 
       try {
-        const res = await fetch(`${API_URL}/update`, {
+        const res = await fetch(`${API_URL}/profile`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -80,10 +80,9 @@
         });
 
         const data = await res.json();
-
         if (res.ok) {
           alert("Profile updated successfully!");
-          fetchProfile(); // refresh profile info
+          fetchProfile();
         } else {
           alert(data.message || "Update failed");
         }
