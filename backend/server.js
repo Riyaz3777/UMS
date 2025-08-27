@@ -6,8 +6,8 @@ require("dotenv").config();
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
-const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
+// const adminRoutes = require("./routes/adminRoutes"); // ❌ commented out
 
 // Connect DB
 mongoose
@@ -23,7 +23,7 @@ app.use(express.json());
 
 // API routes
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);
+// app.use("/api/admin", adminRoutes); // ❌ commented out
 app.use("/api/user", userRoutes);
 
 // Serve frontend static files
