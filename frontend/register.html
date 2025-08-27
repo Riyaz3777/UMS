@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Registration</title>
+  <title>Register</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <div class="container">
     <h2>Register</h2>
     <form id="registerForm">
-      <label for="name">Name:</label>
+      <label for="name">Full Name:</label>
       <input type="text" id="name" name="name" required>
 
       <label for="email">Email:</label>
@@ -21,11 +21,11 @@
 
       <button type="submit">Register</button>
     </form>
-    <p>Already have an account? <a href="login.html">Login</a></p>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
   </div>
 
   <script>
-    const API_URL = "https://ums-2te7.onrender.com/api/auth";
+    const API_URL = "https://ums-2te7.onrender.com/api/users";
 
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -44,8 +44,8 @@
         const data = await res.json();
 
         if (res.ok) {
-          alert("Registration successful! Please login.");
-          window.location.href = "login.html";
+          alert("Registration successful! Please log in.");
+          window.location.href = "login.html"; // redirect after registration
         } else {
           alert(data.message || "Registration failed");
         }
