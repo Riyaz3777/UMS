@@ -1,41 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <div class="container">
     <h2>Admin Dashboard</h2>
+
     <button onclick="logout()">Logout</button>
 
     <h3>All Users</h3>
-    <input type="text" id="search" placeholder="Search users..." onkeyup="filterUsers()">
-
-    <table border="1" width="100%" id="usersTable">
+    <table border="1">
       <thead>
         <tr>
-          <th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="usersList"></tbody>
+      <tbody id="userTableBody"></tbody>
     </table>
-
-    <h3>Add New User</h3>
-    <form id="addUserForm">
-      <input type="text" id="newName" placeholder="Name" required><br>
-      <input type="email" id="newEmail" placeholder="Email" required><br>
-      <input type="password" id="newPassword" placeholder="Password" required><br>
-      <select id="newRole">
-        <option value="User">User</option>
-        <option value="Admin">Admin</option>
-      </select><br>
-      <button type="submit">Add User</button>
-    </form>
   </div>
 
-  <script src="JS/admin.js"></script>
+  <script>
+    const API_URL = "https://ums-2te7.onrender.com/api/users";
+
+    // Get JWT token
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Unauthorized! Please log in as Admin.");
+      window.location.href = "login.html";
+    }
+
+    // Fetch all users
+    async function fetchUsers() {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const users = await res.json();
+
+        let tableBody = document.getElementById("userTableBody");
+        tableBody.innerHTML = "";
+
+        users.forEach(user => {
+          tableBody.innerHTML += `
+            <tr>
+              <td>${user._id}</td>
+              <td>${user.name}</td>
+              <td>${user.email}</td>
+              <td>${user.role}</td>
+              <td>
+                <button onclick="deleteUser('${user._id}')">Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
+    }
+
+    // Delete user
+    async function deleteUser(userId) {
+      try {
+        const res = await fetch(`${API_URL}/${userId}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          alert("User deleted");
+          fetchUsers();
+        } else {
+          alert("Failed to delete user");
+        }
+      } catch (err) {
+        console.error("Error deleting user:", err);
+      }
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+
+    // Load users on page load
+    fetchUsers();
+  </script>
 </body>
 </html>
