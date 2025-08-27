@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/users"; 
+const API_URL = https://ums-2te7.onrender.com; 
 // ⚠️ Replace with Render backend URL after deployment
 
 const token = localStorage.getItem("token");
@@ -9,7 +9,7 @@ if (!token) {
 // ========== Fetch Profile ==========
 async function fetchProfile() {
   try {
-    const res = await fetch(`${API_URL}/profile`, {
+    const res = await fetch(https://ums-2te7.onrender.com, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -43,7 +43,7 @@ if (updateForm) {
     const email = document.getElementById("email").value;
 
     try {
-      const res = await fetch(`${API_URL}/profile`, {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ if (passwordForm) {
     const newPassword = document.getElementById("newPassword").value;
 
     try {
-      const res = await fetch(`${API_URL}/profile`, {
+      const res = await fetch(https://ums-2te7.onrender.com, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -104,3 +104,4 @@ function logout() {
 
 // Load profile on page load
 fetchProfile();
+
