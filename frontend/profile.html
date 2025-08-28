@@ -16,48 +16,6 @@
     <button id="logoutBtn">Logout</button>
   </div>
 
-  <script>
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-
-    // If no token, redirect to login
-    if (!token) {
-      window.location.href = "login.html";
-    }
-
-    document.getElementById("role").innerText = role;
-
-    // Correct API_URL matching Render backend
-    const API_URL = "https://ums-2te7.onrender.com/api/auth"; // or /api/users depending on backend
-
-    // Fetch user profile safely
-    fetch(`${API_URL}/profile`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Server responded with status ${res.status}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("name").innerText = data.name;
-      document.getElementById("email").innerText = data.email;
-    })
-    .catch(err => {
-      console.error("Profile fetch error:", err);
-      alert("Failed to fetch profile. Please login again.");
-      window.location.href = "login.html";
-    });
-
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      window.location.href = "login.html";
-    });
-  </script>
+  <script src="JS/auth.js"></script>
 </body>
 </html>
