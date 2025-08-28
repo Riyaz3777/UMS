@@ -1,5 +1,5 @@
-// ✅ Correct API URL for your backend
-const API_URL = "https://ums-2te7.onrender.com/api/users";
+// ✅ Base API URL matching your Render backend
+const API_URL = "https://ums-2te7.onrender.com/api/auth"; // Use /api/auth if backend uses authRoutes
 
 // =============== REGISTER ===============
 const registerForm = document.getElementById("registerForm");
@@ -21,7 +21,7 @@ if (registerForm) {
       const data = await res.json();
       if (res.ok) {
         alert("Registration successful! Please login.");
-        window.location.href = "index.html"; // redirect to login
+        window.location.href = "login.html"; // redirect to login
       } else {
         alert(data.message || "Registration failed");
       }
