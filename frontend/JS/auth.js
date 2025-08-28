@@ -26,7 +26,7 @@ if (registerForm) {
         alert(data.message || "Registration failed");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Register error:", error);
       alert("Something went wrong!");
     }
   });
@@ -57,7 +57,7 @@ if (loginForm) {
         alert(data.message || "Invalid credentials");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Login error:", error);
       alert("Error connecting to server");
     }
   });
@@ -75,10 +75,11 @@ if (logoutBtn) {
 
 // --------------------- PAGE PROTECTION ---------------------
 const token = localStorage.getItem("token");
+
 if (token) {
   const role = localStorage.getItem("role");
 
-  // Profile page
+  // -------- Profile Page --------
   const userName = document.getElementById("userName");
   const userEmail = document.getElementById("userEmail");
 
@@ -86,21 +87,33 @@ if (token) {
     fetch(`${API_USERS}/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Unauthorized or server error");
+        return res.json();
+      })
       .then((data) => {
         userName.textContent = data.name;
         userEmail.textContent = data.email;
       })
-      .catch((err) => console.error("Profile fetch error:", err));
+      .catch((err) => {
+        console.error("Profile fetch error:", err);
+        alert("Session expired. Please login again.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "index.html";
+      });
   }
 
-  // Admin page
+  // -------- Admin Page --------
   const usersTableBody = document.querySelector("#usersTable tbody");
   if (usersTableBody && role === "Admin") {
     fetch(`${API_USERS}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Unauthorized or server error");
+        return res.json();
+      })
       .then((users) => {
         usersTableBody.innerHTML = "";
         users.forEach((user) => {
@@ -112,9 +125,16 @@ if (token) {
           usersTableBody.innerHTML += row;
         });
       })
-      .catch((err) => console.error("Admin fetch error:", err));
+      .catch((err) => {
+        console.error("Admin fetch error:", err);
+        alert("Session expired. Please login again.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "index.html";
+      });
   }
 } else {
+  // Redirect if not logged in
   if (
     window.location.pathname.includes("profile.html") ||
     window.location.pathname.includes("admin.html")
