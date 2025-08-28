@@ -4,28 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
   <div class="container">
-    <h2>Admin Dashboard</h2>
-    <input type="text" id="searchInput" placeholder="Search users...">
-    <table>
+    <h3>All Users</h3>
+    <table id="usersTable">
       <thead>
         <tr>
           <th>Name</th>
           <th>Email</th>
           <th>Role</th>
-          <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="usersTable">
-        <!-- Users will be populated here -->
-      </tbody>
+      <tbody></tbody>
     </table>
-    <button id="logoutBtn">Logout</button>
   </div>
-
   <script src="JS/auth.js"></script>
 </body>
 </html>
