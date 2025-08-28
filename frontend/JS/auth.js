@@ -1,5 +1,5 @@
-const API_URL = https://ums-2te7.onrender.com; 
-// ⚠️ Change this to your Render backend URL after deployment
+const API_URL = "https://ums-2te7.onrender.com/api/users"; 
+// ✅ Correct base API URL
 
 // =============== REGISTER ===============
 const registerForm = document.getElementById("registerForm");
@@ -42,7 +42,7 @@ if (loginForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch(https://ums-2te7.onrender.com, {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -69,4 +69,3 @@ if (loginForm) {
     }
   });
 }
-
