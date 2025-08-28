@@ -9,11 +9,8 @@
 <body>
   <div class="container">
     <h2>Admin Dashboard</h2>
-    <button id="logoutBtn">Logout</button>
-
-    <h3>Users</h3>
     <input type="text" id="searchInput" placeholder="Search users...">
-    <table border="1" id="usersTable">
+    <table>
       <thead>
         <tr>
           <th>Name</th>
@@ -22,132 +19,13 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="usersTable">
         <!-- Users will be populated here -->
       </tbody>
     </table>
-
-    <h3>Add New User</h3>
-    <form id="addUserForm">
-      <input type="text" id="addName" placeholder="Name" required>
-      <input type="email" id="addEmail" placeholder="Email" required>
-      <select id="addRole">
-        <option value="User">User</option>
-        <option value="Admin">Admin</option>
-      </select>
-      <input type="password" id="addPassword" placeholder="Password" required>
-      <button type="submit">Add User</button>
-    </form>
+    <button id="logoutBtn">Logout</button>
   </div>
 
-  <script>
-    const API_URL = "https://ums-2te7.onrender.com/api/auth";
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-
-    if (!token || role !== "Admin") {
-      window.location.href = "login.html";
-    }
-
-    const usersTableBody = document.querySelector("#usersTable tbody");
-    const searchInput = document.getElementById("searchInput");
-
-    // Fetch and display users
-    function loadUsers() {
-      fetch(`${API_URL}/users`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        usersTableBody.innerHTML = "";
-        data.forEach(user => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.role}</td>
-            <td>
-              <button onclick="editUser('${user._id}')">Edit</button>
-              <button onclick="deleteUser('${user._id}')">Delete</button>
-            </td>
-          `;
-          usersTableBody.appendChild(tr);
-        });
-      })
-      .catch(err => console.error(err));
-    }
-
-    loadUsers();
-
-    // Search functionality
-    searchInput.addEventListener("input", () => {
-      const filter = searchInput.value.toLowerCase();
-      Array.from(usersTableBody.rows).forEach(row => {
-        row.style.display = row.cells[0].innerText.toLowerCase().includes(filter) ||
-                             row.cells[1].innerText.toLowerCase().includes(filter) ? "" : "none";
-      });
-    });
-
-    // Add user
-    document.getElementById("addUserForm").addEventListener("submit", e => {
-      e.preventDefault();
-      const name = document.getElementById("addName").value;
-      const email = document.getElementById("addEmail").value;
-      const password = document.getElementById("addPassword").value;
-      const role = document.getElementById("addRole").value;
-
-      fetch(`${API_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ name, email, password, role })
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert(data.message || "User added successfully");
-        loadUsers();
-        e.target.reset();
-      })
-      .catch(err => console.error(err));
-    });
-
-    // Edit user (simple prompt-based)
-    function editUser(id) {
-      const newName = prompt("Enter new name:");
-      if (!newName) return;
-      fetch(`${API_URL}/users/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ name: newName })
-      })
-      .then(res => res.json())
-      .then(() => loadUsers())
-      .catch(err => console.error(err));
-    }
-
-    // Delete user
-    function deleteUser(id) {
-      if (!confirm("Are you sure to delete this user?")) return;
-      fetch(`${API_URL}/users/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(() => loadUsers())
-      .catch(err => console.error(err));
-    }
-
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      window.location.href = "login.html";
-    });
-  </script>
+  <script src="JS/auth.js"></script>
 </body>
 </html>
