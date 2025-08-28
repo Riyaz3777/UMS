@@ -21,7 +21,7 @@ if (registerForm) {
       const data = await res.json();
       if (res.ok) {
         alert("Registration successful! Please login.");
-        window.location.href = "index.html";
+        window.location.href = "login.html";
       } else {
         alert(data.message || "Registration failed");
       }
@@ -69,7 +69,7 @@ if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    window.location.href = "index.html";
+    window.location.href = "login.html";
   });
 }
 
@@ -95,10 +95,8 @@ if (token) {
       })
       .catch((err) => {
         console.error("Profile fetch error:", err);
-        alert("Session expired. Please login again.");
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        window.location.href = "index.html";
+        localStorage.clear();
+        window.location.href = "login.html";
       });
   }
 
@@ -125,10 +123,8 @@ if (token) {
       })
       .catch((err) => {
         console.error("Admin fetch error:", err);
-        alert("Session expired. Please login again.");
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        window.location.href = "index.html";
+        localStorage.clear();
+        window.location.href = "login.html";
       });
   }
 } else {
@@ -137,6 +133,6 @@ if (token) {
     window.location.pathname.includes("profile.html") ||
     window.location.pathname.includes("admin.html")
   ) {
-    window.location.href = "index.html";
+    window.location.href = "login.html";
   }
 }
