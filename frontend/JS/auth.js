@@ -1,6 +1,6 @@
-const API_URL = "https://ums-2te7.onrender.com/api/auth"; // Render backend
+const API_URL = "https://ums-2te7.onrender.com/api/users"; // Your Render backend
 
-// ---------------- REGISTER ----------------
+// ==================== REGISTER ====================
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
@@ -15,10 +15,11 @@ if (registerForm) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
+
       const data = await res.json();
       if (res.ok) {
         alert("Registration successful! Please login.");
-        window.location.href = "login.html";
+        window.location.href = "index.html";
       } else {
         alert(data.message || "Registration failed");
       }
@@ -29,7 +30,7 @@ if (registerForm) {
   });
 }
 
-// ---------------- LOGIN ----------------
+// ==================== LOGIN ====================
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -44,9 +45,11 @@ if (loginForm) {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
+
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
+        // Redirect based on role
         if (data.role === "Admin") window.location.href = "admin.html";
         else window.location.href = "profile.html";
       } else {
@@ -54,100 +57,68 @@ if (loginForm) {
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong!");
+      alert("Error connecting to server");
     }
   });
 }
 
-// ---------------- PROFILE ----------------
-if (document.getElementById("name")) {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
-  if (!token) window.location.href = "login.html";
-  document.getElementById("role").innerText = role;
-
-  fetch(`${API_URL}/profile`, {
-    headers: { "Authorization": `Bearer ${token}` },
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Failed to fetch profile");
-      return res.json();
-    })
-    .then((data) => {
-      document.getElementById("name").innerText = data.name;
-      document.getElementById("email").innerText = data.email;
-    })
-    .catch((err) => {
-      console.error("Profile fetch error:", err);
-      alert("Failed to fetch profile. Please login again.");
-      window.location.href = "login.html";
-    });
+// ==================== LOGOUT ====================
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "index.html";
+  });
 }
 
-// ---------------- ADMIN DASHBOARD ----------------
-if (document.getElementById("usersTable")) {
-  const token = localStorage.getItem("token");
-  if (!token) window.location.href = "login.html";
+// ==================== PAGE PROTECTION ====================
+const token = localStorage.getItem("token");
+if (token) {
+  const role = localStorage.getItem("role");
 
-  const usersTable = document.getElementById("usersTable");
+  // Profile page load
+  const userName = document.getElementById("userName");
+  const userEmail = document.getElementById("userEmail");
 
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch("https://ums-2te7.onrender.com/api/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const users = await res.json();
-      usersTable.innerHTML = "";
-      users.forEach((user) => {
-        usersTable.innerHTML += `
-          <tr>
+  if (userName && userEmail) {
+    fetch(`${API_URL}/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        userName.textContent = data.name;
+        userEmail.textContent = data.email;
+      })
+      .catch((err) => console.error("Profile fetch error:", err));
+  }
+
+  // Admin page load
+  const usersTableBody = document.querySelector("#usersTable tbody");
+  if (usersTableBody && role === "Admin") {
+    fetch(`${API_URL}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((users) => {
+        usersTableBody.innerHTML = "";
+        users.forEach((user) => {
+          const row = `<tr>
             <td>${user.name}</td>
             <td>${user.email}</td>
             <td>${user.role}</td>
-            <td>
-              <button onclick="editUser('${user._id}')">Edit</button>
-              <button onclick="deleteUser('${user._id}')">Delete</button>
-            </td>
           </tr>`;
-      });
-    } catch (err) {
-      console.error(err);
-      alert("Failed to fetch users");
-    }
-  };
-
-  fetchUsers();
-
-  window.editUser = async (id) => {
-    const name = prompt("Enter new name:");
-    const email = prompt("Enter new email:");
-    const role = prompt("Enter new role:");
-    try {
-      await fetch(`https://ums-2te7.onrender.com/api/users/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ name, email, role }),
-      });
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert("Update failed");
-    }
-  };
-
-  window.deleteUser = async (id) => {
-    if (!confirm("Are you sure?")) return;
-    try {
-      await fetch(`https://ums-2te7.onrender.com/api/users/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert("Delete failed");
-    }
-  };
+          usersTableBody.innerHTML += row;
+        });
+      })
+      .catch((err) => console.error("Admin fetch error:", err));
+  }
+} else {
+  // Redirect to login if not logged in
+  if (
+    window.location.pathname.includes("profile.html") ||
+    window.location.pathname.includes("admin.html")
+  ) {
+    window.location.href = "index.html";
+  }
 }
-
-// ----------------
