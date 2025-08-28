@@ -78,10 +78,13 @@ if (document.getElementById("name")) {
       document.getElementById("email").innerText = data.email;
     })
     .catch((err) => {
-      console.error("Profile fetch error:", err);
-      alert("Failed to fetch profile. Please login again.");
-      window.location.href = "login.html";
-    });
+  console.error("Profile fetch error:", err);
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  alert("Session expired. Please login again.");
+  window.location.href = "login.html";
+});
+
 }
 
 // ---------------- ADMIN DASHBOARD ----------------
@@ -160,5 +163,6 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
+
 
 
