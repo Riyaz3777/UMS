@@ -1,8 +1,8 @@
-// Base URL for auth endpoints
+// --------------------- API URLs ---------------------
 const API_AUTH = "https://ums-2te7.onrender.com/api/auth";
 const API_USERS = "https://ums-2te7.onrender.com/api/users";
 
-// ==================== REGISTER ====================
+// --------------------- REGISTER ---------------------
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
@@ -32,7 +32,7 @@ if (registerForm) {
   });
 }
 
-// ==================== LOGIN ====================
+// --------------------- LOGIN ---------------------
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -51,8 +51,6 @@ if (loginForm) {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
-
-        // Redirect based on role
         if (data.role === "Admin") window.location.href = "admin.html";
         else window.location.href = "profile.html";
       } else {
@@ -65,7 +63,7 @@ if (loginForm) {
   });
 }
 
-// ==================== LOGOUT ====================
+// --------------------- LOGOUT ---------------------
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
@@ -75,7 +73,7 @@ if (logoutBtn) {
   });
 }
 
-// ==================== PAGE PROTECTION ====================
+// --------------------- PAGE PROTECTION ---------------------
 const token = localStorage.getItem("token");
 if (token) {
   const role = localStorage.getItem("role");
@@ -117,7 +115,6 @@ if (token) {
       .catch((err) => console.error("Admin fetch error:", err));
   }
 } else {
-  // Redirect to login if not authenticated
   if (
     window.location.pathname.includes("profile.html") ||
     window.location.pathname.includes("admin.html")
