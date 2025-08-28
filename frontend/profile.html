@@ -17,7 +17,6 @@
   </div>
 
   <script>
-    // Get token & role from localStorage
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
@@ -26,24 +25,29 @@
       window.location.href = "login.html";
     }
 
-    // Display role info
     document.getElementById("role").innerText = role;
 
-    // Fetch user profile from backend
-    const API_URL = "https://ums-2te7.onrender.com/api/auth"; // same backend URL
+    // Correct API_URL matching Render backend
+    const API_URL = "https://ums-2te7.onrender.com/api/auth"; // or /api/users depending on backend
 
+    // Fetch user profile safely
     fetch(`${API_URL}/profile`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`Server responded with status ${res.status}`);
+      }
+      return res.json();
+    })
     .then(data => {
       document.getElementById("name").innerText = data.name;
       document.getElementById("email").innerText = data.email;
     })
     .catch(err => {
-      console.error(err);
+      console.error("Profile fetch error:", err);
       alert("Failed to fetch profile. Please login again.");
       window.location.href = "login.html";
     });
