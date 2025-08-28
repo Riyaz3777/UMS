@@ -1,5 +1,5 @@
-const API_URL = "https://ums-2te7.onrender.com/api/users"; 
-// ✅ Correct base API URL
+// ✅ Correct API URL for your backend
+const API_URL = "https://ums-2te7.onrender.com/api/users";
 
 // =============== REGISTER ===============
 const registerForm = document.getElementById("registerForm");
