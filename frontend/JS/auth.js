@@ -1,4 +1,6 @@
-const API_URL = "https://ums-2te7.onrender.com/api/users"; // Your Render backend
+// Base URL for auth endpoints
+const API_AUTH = "https://ums-2te7.onrender.com/api/auth";
+const API_USERS = "https://ums-2te7.onrender.com/api/users";
 
 // ==================== REGISTER ====================
 const registerForm = document.getElementById("registerForm");
@@ -10,7 +12,7 @@ if (registerForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch(`${API_URL}/register`, {
+      const res = await fetch(`${API_AUTH}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -39,16 +41,17 @@ if (loginForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch(`${API_URL}/login`, {
+      const res = await fetch(`${API_AUTH}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
 
+      const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
+
         // Redirect based on role
         if (data.role === "Admin") window.location.href = "admin.html";
         else window.location.href = "profile.html";
@@ -77,12 +80,12 @@ const token = localStorage.getItem("token");
 if (token) {
   const role = localStorage.getItem("role");
 
-  // Profile page load
+  // Profile page
   const userName = document.getElementById("userName");
   const userEmail = document.getElementById("userEmail");
 
   if (userName && userEmail) {
-    fetch(`${API_URL}/profile`, {
+    fetch(`${API_USERS}/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -93,10 +96,10 @@ if (token) {
       .catch((err) => console.error("Profile fetch error:", err));
   }
 
-  // Admin page load
+  // Admin page
   const usersTableBody = document.querySelector("#usersTable tbody");
   if (usersTableBody && role === "Admin") {
-    fetch(`${API_URL}`, {
+    fetch(`${API_USERS}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -114,7 +117,7 @@ if (token) {
       .catch((err) => console.error("Admin fetch error:", err));
   }
 } else {
-  // Redirect to login if not logged in
+  // Redirect to login if not authenticated
   if (
     window.location.pathname.includes("profile.html") ||
     window.location.pathname.includes("admin.html")
