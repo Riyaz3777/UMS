@@ -1,8 +1,6 @@
-// --------------------- API URLs ---------------------
-const API_AUTH = "https://ums-2te7.onrender.com/api/auth";
-const API_USERS = "https://ums-2te7.onrender.com/api/users";
+const API_URL = "https://ums-2te7.onrender.com/api/auth"; // Render backend
 
-// --------------------- REGISTER ---------------------
+// ---------------- REGISTER ----------------
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
@@ -12,12 +10,11 @@ if (registerForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch(`${API_AUTH}/register`, {
+      const res = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
-
       const data = await res.json();
       if (res.ok) {
         alert("Registration successful! Please login.");
@@ -26,13 +23,13 @@ if (registerForm) {
         alert(data.message || "Registration failed");
       }
     } catch (error) {
-      console.error("Register error:", error);
+      console.error(error);
       alert("Something went wrong!");
     }
   });
 }
 
-// --------------------- LOGIN ---------------------
+// ---------------- LOGIN ----------------
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -41,12 +38,11 @@ if (loginForm) {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch(`${API_AUTH}/login`, {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
@@ -57,82 +53,101 @@ if (loginForm) {
         alert(data.message || "Invalid credentials");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      alert("Error connecting to server");
+      console.error(error);
+      alert("Something went wrong!");
     }
   });
 }
 
-// --------------------- LOGOUT ---------------------
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    window.location.href = "login.html";
-  });
+// ---------------- PROFILE ----------------
+if (document.getElementById("name")) {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+  if (!token) window.location.href = "login.html";
+  document.getElementById("role").innerText = role;
+
+  fetch(`${API_URL}/profile`, {
+    headers: { "Authorization": `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to fetch profile");
+      return res.json();
+    })
+    .then((data) => {
+      document.getElementById("name").innerText = data.name;
+      document.getElementById("email").innerText = data.email;
+    })
+    .catch((err) => {
+      console.error("Profile fetch error:", err);
+      alert("Failed to fetch profile. Please login again.");
+      window.location.href = "login.html";
+    });
 }
 
-// --------------------- PROFILE & ADMIN FETCH ---------------------
-const token = localStorage.getItem("token");
-if (token) {
-  const role = localStorage.getItem("role");
+// ---------------- ADMIN DASHBOARD ----------------
+if (document.getElementById("usersTable")) {
+  const token = localStorage.getItem("token");
+  if (!token) window.location.href = "login.html";
 
-  // Profile page
-  const userName = document.getElementById("userName");
-  const userEmail = document.getElementById("userEmail");
-  if (userName && userEmail) {
-    fetch(`${API_USERS}/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Unauthorized or server error");
-        return res.json();
-      })
-      .then((data) => {
-        userName.textContent = data.name;
-        userEmail.textContent = data.email;
-      })
-      .catch((err) => {
-        console.error("Profile fetch error:", err);
-        localStorage.clear();
-        window.location.href = "login.html";
+  const usersTable = document.getElementById("usersTable");
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("https://ums-2te7.onrender.com/api/users", {
+        headers: { Authorization: `Bearer ${token}` },
       });
-  }
-
-  // Admin page
-  const usersTableBody = document.querySelector("#usersTable tbody");
-  if (usersTableBody && role === "Admin") {
-    fetch(`${API_USERS}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Unauthorized or server error");
-        return res.json();
-      })
-      .then((users) => {
-        usersTableBody.innerHTML = "";
-        users.forEach((user) => {
-          const row = `<tr>
+      const users = await res.json();
+      usersTable.innerHTML = "";
+      users.forEach((user) => {
+        usersTable.innerHTML += `
+          <tr>
             <td>${user.name}</td>
             <td>${user.email}</td>
             <td>${user.role}</td>
+            <td>
+              <button onclick="editUser('${user._id}')">Edit</button>
+              <button onclick="deleteUser('${user._id}')">Delete</button>
+            </td>
           </tr>`;
-          usersTableBody.innerHTML += row;
-        });
-      })
-      .catch((err) => {
-        console.error("Admin fetch error:", err);
-        localStorage.clear();
-        window.location.href = "login.html";
       });
-  }
-} else {
-  // Redirect if not logged in
-  if (
-    window.location.pathname.includes("profile.html") ||
-    window.location.pathname.includes("admin.html")
-  ) {
-    window.location.href = "login.html";
-  }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch users");
+    }
+  };
+
+  fetchUsers();
+
+  window.editUser = async (id) => {
+    const name = prompt("Enter new name:");
+    const email = prompt("Enter new email:");
+    const role = prompt("Enter new role:");
+    try {
+      await fetch(`https://ums-2te7.onrender.com/api/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ name, email, role }),
+      });
+      fetchUsers();
+    } catch (err) {
+      console.error(err);
+      alert("Update failed");
+    }
+  };
+
+  window.deleteUser = async (id) => {
+    if (!confirm("Are you sure?")) return;
+    try {
+      await fetch(`https://ums-2te7.onrender.com/api/users/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchUsers();
+    } catch (err) {
+      console.error(err);
+      alert("Delete failed");
+    }
+  };
 }
+
+// ----------------
