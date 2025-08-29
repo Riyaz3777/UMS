@@ -98,29 +98,41 @@ if (document.getElementById("usersTable")) {
   const usersTable = document.getElementById("usersTable");
 
   const fetchUsers = async () => {
+  try {
+    const res = await fetch("https://ums-2te7.onrender.com/api/users", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Read raw text first
+    const text = await res.text();
+
+    let users;
     try {
-      const res = await fetch("https://ums-2te7.onrender.com/api/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const users = await res.json();
-      usersTable.innerHTML = "";
-      users.forEach((user) => {
-        usersTable.innerHTML += `
-          <tr>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.role}</td>
-            <td>
-              <button onclick="editUser('${user._id}')">Edit</button>
-              <button onclick="deleteUser('${user._id}')">Delete</button>
-            </td>
-          </tr>`;
-      });
+      users = JSON.parse(text);
     } catch (err) {
-      console.error(err);
-      alert("Failed to fetch users");
+      console.error("Backend did not return JSON. Response was:", text);
+      alert("Failed to fetch users: backend returned invalid data.");
+      return;
     }
-  };
+
+    usersTable.innerHTML = "";
+    users.forEach((user) => {
+      usersTable.innerHTML += `
+        <tr>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>
+            <button onclick="editUser('${user._id}')">Edit</button>
+            <button onclick="deleteUser('${user._id}')">Delete</button>
+          </td>
+        </tr>`;
+    });
+  } catch (err) {
+    console.error("Fetch users error:", err);
+    alert("Failed to fetch users");
+  }
+};
 
   fetchUsers();
 
@@ -166,6 +178,7 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
+
 
 
 
