@@ -47,8 +47,11 @@ if (loginForm) {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
-        if (data.role === "admin") window.location.href = "admin.html";
-        else window.location.href = "profile.html";
+        if (data.role && data.role.toLowerCase() === "admin") {
+          window.location.href = "admin.html";
+        } else {
+          window.location.href = "profile.html";
+        }
       } else {
         alert(data.message || "Invalid credentials");
       }
@@ -163,6 +166,7 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
+
 
 
 
