@@ -25,6 +25,14 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Middleware to check admin role
+const isAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+  next();
+};
+
 // =============== REGISTER ===============
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -78,6 +86,45 @@ router.get("/profile", authenticateToken, async (req, res) => {
     const user = await User.findById(req.user.id).select("-password"); // Exclude password
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// =============== ADMIN USER MANAGEMENT ===============
+
+// GET all users (Admin only)
+router.get("/users", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// UPDATE user (Admin only)
+router.put("/users/:id", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email, role },
+      { new: true }
+    ).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// DELETE user (Admin only)
+router.delete("/users/:id", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
