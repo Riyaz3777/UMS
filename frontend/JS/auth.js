@@ -81,13 +81,12 @@ if (document.getElementById("name")) {
       document.getElementById("email").innerText = data.email;
     })
     .catch((err) => {
-  console.error("Profile fetch error:", err);
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  alert("Session expired. Please login again.");
-  window.location.href = "login.html";
-});
-
+      console.error("Profile fetch error:", err);
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      alert("Session expired. Please login again.");
+      window.location.href = "login.html";
+    });
 }
 
 // ---------------- ADMIN DASHBOARD ----------------
@@ -98,41 +97,41 @@ if (document.getElementById("usersTable")) {
   const usersTable = document.getElementById("usersTable");
 
   const fetchUsers = async () => {
-  try {
-    const res = await fetch("https://ums-2te7.onrender.com/api/users", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    // Read raw text first
-    const text = await res.text();
-
-    let users;
     try {
-      users = JSON.parse(text);
-    } catch (err) {
-      console.error("Backend did not return JSON. Response was:", text);
-      alert("Failed to fetch users: backend returned invalid data.");
-      return;
-    }
+      const res = await fetch(`${API_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    usersTable.innerHTML = "";
-    users.forEach((user) => {
-      usersTable.innerHTML += `
-        <tr>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.role}</td>
-          <td>
-            <button onclick="editUser('${user._id}')">Edit</button>
-            <button onclick="deleteUser('${user._id}')">Delete</button>
-          </td>
-        </tr>`;
-    });
-  } catch (err) {
-    console.error("Fetch users error:", err);
-    alert("Failed to fetch users");
-  }
-};
+      // Read raw text first
+      const text = await res.text();
+
+      let users;
+      try {
+        users = JSON.parse(text);
+      } catch (err) {
+        console.error("Backend did not return JSON. Response was:", text);
+        alert("Failed to fetch users: backend returned invalid data.");
+        return;
+      }
+
+      usersTable.innerHTML = "";
+      users.forEach((user) => {
+        usersTable.innerHTML += `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.role}</td>
+            <td>
+              <button onclick="editUser('${user._id}')">Edit</button>
+              <button onclick="deleteUser('${user._id}')">Delete</button>
+            </td>
+          </tr>`;
+      });
+    } catch (err) {
+      console.error("Fetch users error:", err);
+      alert("Failed to fetch users");
+    }
+  };
 
   fetchUsers();
 
@@ -141,9 +140,12 @@ if (document.getElementById("usersTable")) {
     const email = prompt("Enter new email:");
     const role = prompt("Enter new role:");
     try {
-      await fetch(`https://ums-2te7.onrender.com/api/users/${id}`, {
+      await fetch(`${API_URL}/users/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ name, email, role }),
       });
       fetchUsers();
@@ -156,7 +158,7 @@ if (document.getElementById("usersTable")) {
   window.deleteUser = async (id) => {
     if (!confirm("Are you sure?")) return;
     try {
-      await fetch(`https://ums-2te7.onrender.com/api/users/${id}`, {
+      await fetch(`${API_URL}/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -168,7 +170,6 @@ if (document.getElementById("usersTable")) {
   };
 }
 
-// ----------------
 // ---------------- LOGOUT ----------------
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
@@ -178,10 +179,3 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
-
-
-
-
-
-
-
