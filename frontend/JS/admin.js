@@ -5,7 +5,7 @@ const token = localStorage.getItem("token");
 const role = localStorage.getItem("role");
 
 // If not logged in or not admin → redirect
-if (!token || role !== "Admin") {
+if (!token || role !== "admin") {
   window.location.href = "index.html";
 }
 
@@ -29,7 +29,7 @@ async function fetchUsers() {
             <td>
               <select onchange="updateRole('${u._id}', this.value)">
                 <option value="User" ${u.role === "User" ? "selected" : ""}>User</option>
-                <option value="Admin" ${u.role === "Admin" ? "selected" : ""}>Admin</option>
+                <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
               </select>
             </td>
             <td>
@@ -147,4 +147,5 @@ function logout() {
 
 // Load users on page load
 fetchUsers();
+
 
