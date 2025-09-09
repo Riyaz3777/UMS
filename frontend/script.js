@@ -1,4 +1,4 @@
-const apiUrl = https://umss-3liq.onrender.com/api/auth';
+const apiUrl = 'https://umss-3liq.onrender.com/api/auth';
 
 function register() {
     const username = document.getElementById('regUsername').value;
@@ -27,5 +27,6 @@ function login() {
     .then(data => document.getElementById('message').innerText = data)
     .catch(err => console.log(err));
 }
+
 
 
