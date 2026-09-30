@@ -2,7 +2,12 @@
    API Helper Functions & Toast Notification Engine
    ========================================================================== */
 
-const API_BASE_URL = '/api';
+// Dynamic API base URL: defaults to relative path on localhost or configured backend URL when deployed separately
+const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? '' 
+  : (window.localStorage.getItem('ums_backend_url') || 'https://ums-backend-8agv.onrender.com');
+
+const API_BASE_URL = `${BACKEND_URL}/api`;
 
 // Toast Notification Manager
 function showToast(message, type = 'info') {

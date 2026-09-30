@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
   // 1. If user provided a valid MongoDB Atlas URI in .env, connect to Atlas
   if (uri && !uri.includes('user:password@cluster0')) {
