@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - User Management System</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/" class="nav-brand">
+      <div class="brand-icon">U</div>
+      <span>UMS Platform</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" class="nav-link">Home</a></li>
+      <li id="nav-admin-link" style="display: none;"><a href="/admin-dashboard" class="nav-link">⚡ Admin Dashboard</a></li>
+      <li><a href="/profile" class="nav-link active">👤 My Profile</a></li>
+    </ul>
+    <div id="nav-user-pill"></div>
+  </nav>
+
+  <main class="container" style="max-width: 960px;">
+    <!-- Profile Header Card -->
+    <div class="glass-panel" style="margin-bottom: 2rem; display:flex; align-items:center; gap:1.75rem; flex-wrap:wrap;">
+      <div id="avatar-big" class="avatar-circle" style="width:72px; height:72px; font-size:1.8rem; box-shadow: var(--shadow-glow);">
+        U
+      </div>
+      <div>
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+          <h1 id="profile-name" style="font-size: 1.8rem;">Loading Profile...</h1>
+          <span id="profile-role-badge" class="badge">Role</span>
+          <span id="profile-status-badge" class="badge">Status</span>
+        </div>
+        <p id="profile-email-badge" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;"></p>
+      </div>
+    </div>
+
+    <!-- Edit Profile & Change Password Layout Grid -->
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;">
+      <!-- Update Details Panel -->
+      <div class="glass-panel">
+        <h3 style="font-size: 1.25rem; margin-bottom: 1.25rem; display:flex; align-items:center; gap:0.5rem;">
+          ✏️ Edit Profile Details
+        </h3>
+
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address (Read-only)</label>
+            <input type="email" id="email" class="form-input" disabled style="opacity: 0.6; cursor: not-allowed;">
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" class="form-input" placeholder="+1 (555) 000-0000">
+          </div>
+
+          <div class="form-group">
+            <label for="bio">Short Bio</label>
+            <textarea id="bio" class="form-textarea" rows="3" placeholder="Tell us about yourself..."></textarea>
+          </div>
+
+          <button type="submit" id="update-profile-btn" class="btn btn-primary" style="margin-top: 0.5rem;">Save Changes</button>
+        </form>
+      </div>
+
+      <!-- Change Password Panel -->
+      <div class="glass-panel">
+        <h3 style="font-size: 1.25rem; margin-bottom: 1.25rem; display:flex; align-items:center; gap:0.5rem;">
+          🔐 Change Security Password
+        </h3>
+
+        <form id="password-form">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" class="form-input" placeholder="••••••••" required>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" class="form-input" placeholder="At least 6 characters" required>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmNewPassword">Confirm New Password</label>
+            <input type="password" id="confirmNewPassword" class="form-input" placeholder="Re-enter new password" required>
+          </div>
+
+          <button type="submit" id="change-pwd-btn" class="btn btn-secondary" style="margin-top: 0.5rem;">Update Password</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/profile.js"></script>
+</body>
+</html>
